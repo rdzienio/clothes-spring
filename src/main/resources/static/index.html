@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ULTIMATE TODO LIST</title>
+    <title>Clothes&Weather CRUD app.</title>
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
           integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
 </head>
 <body>
-<main style="width: 40%; margin: 0 auto">
+<main style="width: 80%; margin: 0 auto">
     <div id="welcome" style="text-align: center">
         <h1>Where are you from</h1>
     </div>
@@ -16,5 +16,38 @@
         <button id="btn" class="pure-button pure-button-primary pure-u-1">Submit</button>
     </form>
 </main>
+<script>
+    (function (){
+        const API_URL = 'http://localhost:8080/api';
+        const WEATHER_API_URL = `${API_URL}/weather`;
+
+        initCityFormClick();
+
+        function initCityFormClick() {
+            const cityForm = document.getElementById('cityForm');
+
+            document.getElementById('btn').addEventListener('click', (event)=>{
+                event.preventDefault();
+                const city = cityForm.elements.city.value;
+                fetch(`${WEATHER_API_URL}?city=${city}`)
+                .then(response => response.text())
+                    .then((text) => {
+                        document.getElementById('welcome').innerHTML = `
+                <h1>${text}</h1>
+            `;
+                        cityForm.remove();
+                    });
+            });
+
+        }
+
+        function processOkResponse(response = {}) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error(`Status not 200 (${response.status})`);
+        }
+    })();
+</script>
 </body>
 </html>
