@@ -17,4 +17,8 @@ public class ClothesService {
         return repository.findAll();
     }
 
+    public Clothes getById(Integer id){
+        return repository.getOne(id);
+    }
+
 }
