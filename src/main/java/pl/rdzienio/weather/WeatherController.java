@@ -7,9 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/weather")
+@RequestMapping("/api/weather")
 public class WeatherController {
 
     private final WeatherService service;
@@ -20,9 +21,9 @@ public class WeatherController {
         this.service = service;
     }
 
-    @GetMapping("/{city}")
-    ResponseEntity<Weather> showWeatherForCurrentCity(@PathVariable String city) {
+    @GetMapping(params = {"city"})
+    ResponseEntity<String> showWeatherForCurrentCity(@RequestParam String city) {
         logger.info("Got request with parameter " + city);
-        return ResponseEntity.ok(service.getWeather(city));
+        return ResponseEntity.ok(service.getWeather(city).toString());
     }
 }

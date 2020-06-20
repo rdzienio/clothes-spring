@@ -1,5 +1,6 @@
 package pl.rdzienio.weather;
 
+import com.google.gson.JsonArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.gson.JsonElement;
@@ -10,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.Objects;
 
 public class Weather {
@@ -39,7 +41,7 @@ public class Weather {
         this.precipitation = 0;
         this.wind = 0;
         this.city = city;
-        this.description = "Clear";
+        this.description = "";
         logger.info("Created forecast with only city param: " + city);
         parseWeather(getWeather());
     }
@@ -89,49 +91,53 @@ public class Weather {
             JsonObject jsonObject1 = mainEl.getAsJsonObject();
             /*JsonElement temp = jsonObject1.get("feels_like");
             System.out.println("Temperatura odczuwalna: " + temp);*/
-            JsonElement temp = jsonObject1.get("temp");
-            System.out.println("Temperatura: " + temp);
-            setTemperature(temp.getAsDouble());
+            JsonElement temp1 = jsonObject1.get("temp");
+            System.out.println("Temperatura: " + temp1);
+            setTemperature(temp1.getAsDouble());
         }
 
         JsonElement precipitationEl = jsonObject.get("rain");
         if (precipitationEl != null && precipitationEl.isJsonObject()) {
-            JsonObject jsonObject1 = precipitationEl.getAsJsonObject();
-            JsonElement rain = jsonObject1.get("3h");
-            if (Objects.nonNull(rain)) {
-                System.out.println("Opad deszczu 3h: " + rain);
-                setPrecipitation(rain.getAsDouble());
+            JsonObject jsonObjectR = precipitationEl.getAsJsonObject();
+            JsonElement rainJ = jsonObjectR.get("1h");
+            if (Objects.nonNull(rainJ)) {
+                System.out.println("Opad deszczu 1h: " + rainJ);
+                setPrecipitation(rainJ.getAsDouble());
             }
         } else
             setPrecipitation(0);
 
         JsonElement precipitationEl1 = jsonObject.get("snow");
         if (precipitationEl1 != null && precipitationEl1.isJsonObject()) {
-            JsonObject jsonObject1 = precipitationEl1.getAsJsonObject();
-            JsonElement snow = jsonObject1.get("3h");
-            if (Objects.nonNull(snow)) {
-                System.out.println("Opad sniegu 3h: " + snow);
-                this.precipitation += snow.getAsDouble();
+            JsonObject jsonObjectS = precipitationEl1.getAsJsonObject();
+            JsonElement snowJ = jsonObjectS.get("3h");
+            if (Objects.nonNull(snowJ)) {
+                System.out.println("Opad sniegu 3h: " + snowJ);
+                this.precipitation += snowJ.getAsDouble();
             }
         }
 
         JsonElement windEl = jsonObject.get("wind");
         if (windEl != null && windEl.isJsonObject()) {
-            JsonObject jsonObject1 = windEl.getAsJsonObject();
-            JsonElement wind = jsonObject1.get("speed");
-            System.out.println("Predkosc wiatru: " + wind);
-            this.setWind(wind.getAsDouble());
+            JsonObject jsonObjectW = windEl.getAsJsonObject();
+            JsonElement windJ = jsonObjectW.get("speed");
+            System.out.println("Predkosc wiatru: " + windJ);
+            this.setWind(windJ.getAsDouble());
         } else
             setWind(0);
 
-        JsonElement desc = jsonObject.get("weather");
-        if (desc != null && desc.isJsonObject()) {
-            JsonObject jsonObject1 = desc.getAsJsonObject();
-            JsonElement wind = jsonObject1.get("description");
-            System.out.println(desc);
-            this.setDescription(desc.getAsString());
-        } else
+        JsonArray descEl = jsonObject.getAsJsonArray("weather");
+        if (descEl != null && descEl.isJsonArray()) {
+            //JsonArray jsonObjectD = descEl.getAsJsonArray();
+            //logger.info(String.valueOf(jsonObjectD));
+            JsonElement el0 = descEl.get(0);
+            JsonObject descriptionObj = el0.getAsJsonObject();
+            JsonElement descriptionJ= descriptionObj.get("description");
+            System.out.println(descriptionJ);
+            this.setDescription(descriptionJ.getAsString());
+        } else {
             setDescription("clear sky");
+        }
 
     }
 

@@ -12,7 +12,7 @@
     <artifactId>clothes-spring</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>clothes-spring</name>
-    <description>REST project for Spring Boot. CRUD app that matches your clothest to current weather.</description>
+    <description>REST project for Spring Boot. CRUD app that matches your clothes to current weather.</description>
 
     <properties>
         <java.version>11</java.version>
