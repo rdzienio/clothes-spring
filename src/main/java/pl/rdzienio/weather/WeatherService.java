@@ -11,14 +11,15 @@ public class WeatherService {
 
     private final Logger logger = LoggerFactory.getLogger(WeatherService.class);
     private final ClothesService clothesService;
+    private final WeatherRepository weatherRepository;
 
-    public WeatherService(final ClothesService clothesService) {
+    public WeatherService(final ClothesService clothesService, final WeatherRepository weatherRepository) {
         this.clothesService = clothesService;
+        this.weatherRepository = weatherRepository;
     }
 
-    public Weather getWeather(String city){
-        logger.info("Return forecast to city: " + city);
-        return new Weather(city);
+    public WeatherForecast getWeatherForecast(String city) {
+        return weatherRepository.getWeatherForecastFromConnectionUrl(city);
     }
 
 
