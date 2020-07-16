@@ -22,8 +22,8 @@ public class WeatherController {
     }
 
     @GetMapping(params = {"city"})
-    ResponseEntity<String> showWeatherForCurrentCity(@RequestParam String city) {
+    ResponseEntity<WeatherForecast> showWeatherForCurrentCity(@RequestParam String city) {
         logger.info("Got request with parameter " + city);
-        return ResponseEntity.ok(service.getWeather(city).toString());
+        return ResponseEntity.ok(service.getWeatherForecast(city));
     }
 }
