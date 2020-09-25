@@ -3,10 +3,7 @@ package pl.rdzienio.clothes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,15 +21,22 @@ public class ClothesController {
     }
 
     @GetMapping
-    ResponseEntity<List<Clothes>> getAllClothes(){
+    public ResponseEntity<List<Clothes>> getAllClothes() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<ClothesDTO> getById(@PathVariable Integer id){
-        logger.info("Got id {}",  id);
+    public ResponseEntity<ClothesDTO> getById(@PathVariable Integer id) {
+        logger.info("Got id {}", id);
         Clothes gotById = service.getById(id);
         logger.info("Found with id {}: {}", id, gotById.getName());
         return ResponseEntity.ok(converter.fromClothes(gotById));
+    }
+
+    @PostMapping("/save")
+    public ClothesDTO saveCloth(@RequestBody ClothesDTO clothToSave) {
+        logger.info("Saving cloth: {}", clothToSave.getName());
+        var cloth = converter.fromDTO(clothToSave);
+        return converter.fromClothes(service.saveCloth(cloth));
     }
 }
