@@ -1,31 +1,18 @@
 package pl.rdzienio.clothes;
 
-import org.hibernate.annotations.GenericGenerator;
+public class ClothesDTO {
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "clothes")
-public class Clothes {
-
-    @Id
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
     private Integer id;
-
     private String name;
     private String category;
     private Integer waterproof;
     private Integer temperature;
     private Integer wind;
 
-    public Clothes() {
+    public ClothesDTO() {
     }
 
-    public Clothes(Integer id, String name, String category, Integer waterproof, Integer temperature, Integer wind) {
+    public ClothesDTO(Integer id, String name, String category, Integer waterproof, Integer temperature, Integer wind) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -42,7 +29,7 @@ public class Clothes {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -50,7 +37,7 @@ public class Clothes {
         return category;
     }
 
-    public void setCategory(final String category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 
@@ -58,7 +45,7 @@ public class Clothes {
         return waterproof;
     }
 
-    public void setWaterproof(final Integer waterproof) {
+    public void setWaterproof(Integer waterproof) {
         this.waterproof = waterproof;
     }
 
@@ -66,7 +53,7 @@ public class Clothes {
         return temperature;
     }
 
-    public void setTemperature(final Integer temperature) {
+    public void setTemperature(Integer temperature) {
         this.temperature = temperature;
     }
 
@@ -74,7 +61,7 @@ public class Clothes {
         return wind;
     }
 
-    public void setWind(final Integer wind) {
+    public void setWind(Integer wind) {
         this.wind = wind;
     }
 }
