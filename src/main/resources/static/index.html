@@ -26,13 +26,16 @@
             <input id="clothName" class="pure-input-rounded pure-input-2-3" placeholder="new TODO">
             <button id="addCloth" class="pure-button pure-button-primary">+</button>
         </ul>
-        <fieldset id="allClothes"></fieldset>
+
     </form>
+    <dl id="allClothes"></dl>
 </main>
 <script>
     (function (){
         const API_URL = 'http://localhost:8080/api';
         const WEATHER_API_URL = `${API_URL}/weather`;
+        const CLOTHES_API_URL = `${API_URL}/clothes`;
+
 
         function createNewCloth(cloth) {
             const table = document.getElementById('clothesTable')
@@ -40,7 +43,19 @@
             var td_name = tr.insertCell();
             td_name.appendChild(document.createTextNode(cloth.name))
 
-            document.getElementById('allTodos').appendChild(label);
+            //document.getElementById('allClothes').appendChild(label);
+        }
+
+        function showClothes(){
+            fetch(`${CLOTHES_API_URL}`)
+            .then(response =>response.json())
+            .then((clothesArr) => {
+                const clothesList = clothesArr.map(c => `
+                <dt>${c.name}</dt>
+                <dd>${c.category}</dd>
+                `).join('\n');
+                document.getElementById('allClothes').innerHTML= clothesList;
+            });
         }
 
         initCityFormClick();
@@ -57,6 +72,7 @@
                         document.getElementById('welcome').innerHTML = `
                 <h1>${text}</h1>
             `;
+                        showClothes();
                         /*cityForm.remove();*/
                     });
             });
