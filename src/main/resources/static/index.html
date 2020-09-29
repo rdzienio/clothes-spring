@@ -52,7 +52,11 @@
                 .then((clothesArr) => {
                     const clothesList = clothesArr.map(c => `
                 <dt>${c.name}</dt>
-                <dd>${c.category}</dd>
+                <dd>Category: ${c.category}</dd>
+                <dd>Waterproof: ${c.waterproof}</dd>
+                <dd>Temperature: ${c.temperature}</dd>
+                <dd>Wind: ${c.wind}</dd>
+
                 `).join('\n');
                     document.getElementById('allClothes').innerHTML = clothesList;
                 });
