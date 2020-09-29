@@ -31,7 +31,7 @@
     <dl id="allClothes"></dl>
 </main>
 <script>
-    (function (){
+    (function () {
         const API_URL = 'http://localhost:8080/api';
         const WEATHER_API_URL = `${API_URL}/weather`;
         const CLOTHES_API_URL = `${API_URL}/clothes`;
@@ -46,16 +46,16 @@
             //document.getElementById('allClothes').appendChild(label);
         }
 
-        function showClothes(){
+        function showClothes() {
             fetch(`${CLOTHES_API_URL}`)
-            .then(response =>response.json())
-            .then((clothesArr) => {
-                const clothesList = clothesArr.map(c => `
+                .then(response => response.json())
+                .then((clothesArr) => {
+                    const clothesList = clothesArr.map(c => `
                 <dt>${c.name}</dt>
                 <dd>${c.category}</dd>
                 `).join('\n');
-                document.getElementById('allClothes').innerHTML= clothesList;
-            });
+                    document.getElementById('allClothes').innerHTML = clothesList;
+                });
         }
 
         initCityFormClick();
@@ -63,20 +63,66 @@
         function initCityFormClick() {
             const cityForm = document.getElementById('cityForm');
 
-            document.getElementById('btn').addEventListener('click', (event)=>{
+            document.getElementById('btn').addEventListener('click', (event) => {
                 event.preventDefault();
                 const city = cityForm.elements.city.value;
                 fetch(`${WEATHER_API_URL}?city=${city}`)
-                .then(response => response.text())
-                    .then((text) => {
-                        document.getElementById('welcome').innerHTML = `
-                <h1>${text}</h1>
-            `;
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        weatherForecast="";
+                        if (data.rain!=null){
+                            weatherForecast = `
+                        <h1>Current weather for ${city}</h1>
+                        <dl>
+                            <dt>Description:</dt>
+                            <dd>${data.weather[0].description}</dd>
+                            <dt>Temperature:</dt>
+                            <dd>${data.main.temp}°C</dd>
+                            <dt>Pressure:</dt>
+                            <dd>${data.main.pressure}hPa</dd>
+                            <dt>Precipitation:</dt>
+                            <dd>Rain: ${data.rain["1h"]}mm/h</dd>
+                        </dl>
+                        `;
+                        }
+                        else if (data.snow!=null){
+                            weatherForecast = `
+                        <h1>Current weather for ${city}</h1>
+                        <dl>
+                            <dt>Description:</dt>
+                            <dd>${data.weather[0].description}</dd>
+                            <dt>Temperature:</dt>
+                            <dd>${data.main.temp}°C</dd>
+                            <dt>Pressure:</dt>
+                            <dd>${data.main.pressure}hPa</dd>
+                            <dt>Precipitation:</dt>
+                            <dd>Snow: ${data.snow["1h"]}mm/h</dd>
+                        </dl>
+                        `;
+                        }
+                        else
+                        {
+                            weatherForecast = `
+                        <h1>Current weather for ${city}</h1>
+                        <dl>
+                            <dt>Description:</dt>
+                            <dd>${data.weather[0].description}</dd>
+                            <dt>Temperature:</dt>
+                            <dd>${data.main.temp}°C</dd>
+                            <dt>Pressure:</dt>
+                            <dd>${data.main.pressure}hPa</dd>
+                            <dt>Precipitation:</dt>
+                            <dd>Not raining now!</dd>
+                        </dl>
+                        `;
+                        }
+                        document.getElementById('welcome').innerHTML = weatherForecast;
                         showClothes();
                         /*cityForm.remove();*/
+                        /*<dd>${w['weather'][0]['description']}</dd>*/
                     });
             });
-
         }
 
         function processOkResponse(response = {}) {
