@@ -7,6 +7,7 @@ public class Weather {
 
     private String main;
     private String description;
+    private String icon;
 
     public Weather() {
     }
@@ -27,4 +28,11 @@ public class Weather {
         this.description = description;
     }
 
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
 }

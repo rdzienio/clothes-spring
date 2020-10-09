@@ -8,11 +8,14 @@
 </head>
 <body>
 <main style="width: 50%; margin: 0 auto">
-    <div id="welcome">
+    <div id="welcome" style="text-align: center">
         <h1>Where are you from</h1>
     </div>
+    <div id="weatherIcon" style="display: none">
+        <img src="http://openweathermap.org/img/wn/10d@2x.png" alt="Weather icon">
+    </div>
     <form id="cityForm" class="pure-form pure-g pure-form-aligned">
-        <input class="pure-input-rounded pure-u-1" name="city" placeholder="city">
+        <input class="pure-u-1" name="city" placeholder="city">
         <button id="btn" class="pure-button pure-button-primary pure-u-1">Submit</button>
     </form>
     <form id="clothesForm" class="pure-form pure-form-aligned" style="display: none;">
@@ -168,9 +171,11 @@
                         `;
                         }
                         document.getElementById('welcome').innerHTML = weatherForecast;
+                        document.getElementById('weatherIcon').innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="${data.weather[0].description}">`
                         showClothes();
                         cityForm.remove();
                         document.getElementById('clothesForm').style.display = 'block';
+                        document.getElementById('weatherIcon').style.display = 'block';
                     });
             });
         }
