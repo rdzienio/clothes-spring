@@ -88,7 +88,14 @@
                 clothTemperature.value = "";
                 clothWind.value = "";
             })
-            .catch(console.warn);
+            .catch(console.warn)
+            .then(()=> {
+                clothName.value = "";
+                clothCategory.value = "";
+                clothWaterproof.value = "";
+                clothTemperature.value = "";
+                clothWind.value = "";
+            });
         })
 
 
