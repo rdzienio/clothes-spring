@@ -39,4 +39,11 @@ public class ClothesController {
         var cloth = converter.fromDTO(clothToSave);
         return converter.fromClothes(service.saveCloth(cloth));
     }
+
+    @DeleteMapping("/remove/{id}")
+    public int removeClothById(@PathVariable Integer id){
+        logger.info("Got id to remove: {}", id);
+        service.removeCloth(id);
+        return id;
+    }
 }
