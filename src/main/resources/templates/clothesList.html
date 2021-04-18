@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Clothes List</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
+          integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
+</head>
+<body>
+<main style="width: 50%; margin: 0 auto"> <!--header menu-->
+<div class="pure-menu pure-menu-horizontal">
+    <a href="/" class="pure-menu-heading pure-menu-link">HOMEPAGE</a>
+    <ul class="pure-menu-list">
+        <li class="pure-menu-item">
+            <a href="/clothes" class="pure-menu-link">Clothes</a>
+        </li>
+        <li class="pure-menu-item">
+            <a href="#" class="pure-menu-link">Weather</a>
+        </li>
+    </ul>
+</div>
+<!-- list of clothes-->
+    <dl id="allClothes"></dl>
+</main>
+<script>
+    (function () {
+        const API_URL = 'http://localhost:8080/api';
+        const CLOTHES_API_URL = `${API_URL}/clothes`;
+
+        showClothes();
+
+        function showClothes() {
+            fetch(`${CLOTHES_API_URL}`)
+                .then(response => response.json())
+                .then((clothesArr) => {
+                    const clothesList = clothesArr.map(c => `
+                <dt>${c.name}</dt>
+                <dd>Category: ${c.category}</dd>
+                <dd>Waterproof: ${c.waterproof}</dd>
+                <dd>Temperature: ${c.temperature}</dd>
+                <dd>Wind: ${c.wind}</dd>
+
+                `).join('\n');
+                    document.getElementById('allClothes').innerHTML = clothesList;
+                });
+        }
+    })();
+
+</script>
+</body>
+</html>

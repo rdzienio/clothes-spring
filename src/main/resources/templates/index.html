@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Clothes&Weather CRUD app.</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
+          integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
+</head>
+<body>
+<main style="width: 50%; margin: 0 auto">
+    <div class="pure-menu pure-menu-horizontal">
+        <a href="/" class="pure-menu-heading pure-menu-link">HOMEPAGE</a>
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+                <a href="/clothes" class="pure-menu-link">Clothes</a>
+            </li>
+            <li class="pure-menu-item">
+                <a href="#" class="pure-menu-link">Weather</a>
+            </li>
+        </ul>
+    </div>
+    <div id="header" class="pure-g">
+    <div class="pure-u-1-2" id="welcome" style="text-align: center">
+        <h1>Current weather for Warszawa</h1>
+        <dl>
+            <dt>Description:</dt>
+            <dd th:text="${weatherForWarsaw.weather[0].description}">${data.weather[0].description}</dd>
+            <dt >Temperature:</dt>
+            <dd th:text="${weatherForWarsaw.main.temp}+'°C'">${data.main.temp}°C</dd>
+            <dt>Pressure:</dt>
+            <dd th:text="${weatherForWarsaw.main.pressure}+'hPa'">${data.main.pressure}hPa</dd>
+            
+            <dt>Precipitation:</dt>
+            <dd>Rain: ${data.rain["1h"]}mm/h</dd>
+        </dl>
+    </div>
+    <div class="pure-u-1-2" id="weatherIcon" style="visibility: hidden; text-align: center; margin: auto">
+        <img src="http://openweathermap.org/img/wn/10d@2x.png" alt="Weather icon">
+    </div>
+    </div>
+    <form id="cityForm" class="pure-form pure-g pure-form-aligned">
+        <input class="pure-u-1" name="city" placeholder="Search city...">
+        <button id="btn" class="pure-button pure-button-primary pure-u-1">Search</button>
+    </form>
+    <form id="clothesForm" class="pure-form pure-form-aligned" style="display: none;">
+        <fieldset>
+            <legend>Add new clothes</legend>
+            <div class="pure-control-group">
+                <label for="clothName">Name</label>
+                <input id="clothName" placeholder="name">
+            </div>
+            <div class="pure-control-group">
+                <label for="clothCategory">Category</label>
+                <input id="clothCategory" placeholder="category">
+            </div>
+            <div class="pure-control-group">
+                <label for="clothWaterproof">Waterproof</label>
+                <input id="clothWaterproof" placeholder="waterproof">
+            </div>
+            <div class="pure-control-group">
+                <label for="clothTemperature">Temperature</label>
+                <input id="clothTemperature" placeholder="temperature">
+            </div>
+            <div class="pure-control-group">
+                <label for="clothWind">Windproof</label>
+                <input id="clothWind" placeholder="windproof">
+            </div>
+            <div class="pure-controls">
+                <button id="addCloth" class="pure-button pure-button-primary">Save</button>
+            </div>
+        </fieldset>
+    </form>
+    <dl id="allClothes"></dl>
+</main>
+<script>
+    (function () {
+        const API_URL = 'http://localhost:8080/api';
+        const WEATHER_API_URL = `${API_URL}/weather`;
+        const CLOTHES_API_URL = `${API_URL}/clothes`;
+        const SAVE_CLOTHES_URL = `${CLOTHES_API_URL}/save`;
+
+        const clothName = document.getElementById('clothName');
+        const clothCategory = document.getElementById('clothCategory');
+        const clothWaterproof = document.getElementById('clothWaterproof');
+        const clothTemperature = document.getElementById('clothTemperature');
+        const clothWind = document.getElementById('clothWind');
+
+
+        document.getElementById('addCloth').addEventListener('click', (event)=>{
+            event.preventDefault();
+            fetch(SAVE_CLOTHES_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: clothName.value,
+                    category: clothCategory.value,
+                    waterproof: clothWaterproof.value,
+                    temperature: clothTemperature.value,
+                    wind: clothWind.value})
+            })
+            .then(processOkResponse)
+            .then(showClothes)
+            .then(()=> {
+                clothName.value = "";
+                clothCategory.value = "";
+                clothWaterproof.value = "";
+                clothTemperature.value = "";
+                clothWind.value = "";
+            })
+            .catch(console.warn)
+            .then(()=> {
+                clothName.value = "";
+                clothCategory.value = "";
+                clothWaterproof.value = "";
+                clothTemperature.value = "";
+                clothWind.value = "";
+            });
+        })
+
+
+/*        function createNewCloth(cloth) {
+            const list = document.getElementById('clothesTable')
+            const tr = table.insertRow();
+            var td_name = tr.insertCell();
+            td_name.appendChild(document.createTextNode(cloth.name))
+
+            //document.getElementById('allClothes').appendChild(label);
+        }*/
+
+        function showClothes() {
+            fetch(`${CLOTHES_API_URL}`)
+                .then(response => response.json())
+                .then((clothesArr) => {
+                    const clothesList = clothesArr.map(c => `
+                <dt>${c.name}</dt>
+                <dd>Category: ${c.category}</dd>
+                <dd>Waterproof: ${c.waterproof}</dd>
+                <dd>Temperature: ${c.temperature}</dd>
+                <dd>Wind: ${c.wind}</dd>
+
+                `).join('\n');
+                    document.getElementById('allClothes').innerHTML = clothesList;
+                });
+        }
+
+        initCityFormClick();
+
+        function initCityFormClick() {
+            const cityForm = document.getElementById('cityForm');
+
+            document.getElementById('btn').addEventListener('click', (event) => {
+                event.preventDefault();
+                const city = cityForm.elements.city.value;
+                fetch(`${WEATHER_API_URL}?city=${city}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        weatherForecast = "";
+                        if (data.rain != null) {
+                            weatherForecast = `
+                        <h1>Current weather for ${city}</h1>
+                        <dl>
+                            <dt>Description:</dt>
+                            <dd>${data.weather[0].description}</dd>
+                            <dt>Temperature:</dt>
+                            <dd>${data.main.temp}°C</dd>
+                            <dt>Pressure:</dt>
+                            <dd>${data.main.pressure}hPa</dd>
+                            <dt>Precipitation:</dt>
+                            <dd>Rain: ${data.rain["1h"]}mm/h</dd>
+                        </dl>
+                        `;
+                        } else if (data.snow != null) {
+                            weatherForecast = `
+                        <h1>Current weather for ${city}</h1>
+                        <dl>
+                            <dt>Description:</dt>
+                            <dd>${data.weather[0].description}</dd>
+                            <dt>Temperature:</dt>
+                            <dd>${data.main.temp}°C</dd>
+                            <dt>Pressure:</dt>
+                            <dd>${data.main.pressure}hPa</dd>
+                            <dt>Precipitation:</dt>
+                            <dd>Snow: ${data.snow["1h"]}mm/h</dd>
+                        </dl>
+                        `;
+                        } else {
+                            weatherForecast = `
+                        <h1>Current weather for ${city}</h1>
+                        <dl>
+                            <dt>Description:</dt>
+                            <dd>${data.weather[0].description}</dd>
+                            <dt>Temperature:</dt>
+                            <dd>${data.main.temp}°C</dd>
+                            <dt>Pressure:</dt>
+                            <dd>${data.main.pressure}hPa</dd>
+                            <dt>Precipitation:</dt>
+                            <dd>Not raining now!</dd>
+                        </dl>
+                        `;
+                        }
+                        document.getElementById('welcome').innerHTML = weatherForecast;
+                        document.getElementById('weatherIcon').innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="${data.weather[0].description}">`
+                        showClothes();
+                        //cityForm.remove();
+                        document.getElementById('clothesForm').style.display = 'block';
+                        document.getElementById('weatherIcon').style.visibility = 'visible';
+                    });
+            });
+        }
+
+        function processOkResponse(response = {}) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error(`Status not 200 (${response.status})`);
+        }
+    })();
+</script>
+</body>
+</html>
