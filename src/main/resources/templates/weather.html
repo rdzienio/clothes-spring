@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather || Clothes&Weather CRUD app.</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
+          integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
+</head>
+<body>
+<main style="width: 50%; margin: 0 auto">
+    <div class="pure-menu pure-menu-horizontal">
+        <a href="/" class="pure-menu-heading pure-menu-link">HOMEPAGE</a>
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+                <a href="/clothes" class="pure-menu-link">Clothes</a>
+            </li>
+            <li class="pure-menu-item">
+                <a href="/weather" class="pure-menu-link">Weather</a>
+            </li>
+        </ul>
+    </div>
+    <div id="header" class="pure-g">
+        <div class="pure-u-1-2" id="welcome" style="text-align: center">
+            <h1>Current weather for Warszawa</h1>
+            <dl>
+                <dt>Description:</dt>
+                <dd th:text="${weatherForWarsaw.weather[0].description}">${data.weather[0].description}</dd>
+                <dt >Temperature:</dt>
+                <dd th:text="${weatherForWarsaw.main.temp}+'°C'">${data.main.temp}°C</dd>
+                <dt>Pressure:</dt>
+                <dd th:text="${weatherForWarsaw.main.pressure}+'hPa'">${data.main.pressure}hPa</dd>
+
+                <dt>Precipitation:</dt>
+                <dd th:if="${weatherForWarsaw.rain != null}" th:text='${weatherForWarsaw.rain["1h"]}mm/h"}'></dd>
+                <dd th:if="${weatherForWarsaw.snow != null}" th:text='${weatherForWarsaw.snow["1h"]}mm/h"}'></dd>
+                <dd th:if="${weatherForWarsaw.rain == null && weatherForWarsaw.snow == null}">Not raining now!</dd>
+            </dl>
+        </div>
+        <div class="pure-u-1-2" id="weatherIcon" style="visibility: visible; text-align: center; margin: auto">
+            <img th:src="${weatherIconForWarsaw}">
+        </div>
+    </div>
+    <form id="cityForm" class="pure-form pure-g pure-form-aligned">
+        <input class="pure-u-1" name="city" placeholder="Search city...">
+        <button id="btn" class="pure-button pure-button-primary pure-u-1">Search</button>
+    </form>
+</main>
+<script>
+    (function () {
+        const API_URL = 'http://localhost:8080/api';
+        const WEATHER_API_URL = `${API_URL}/weather`;
+
+        initCityFormClick();
+
+        function initCityFormClick() {
+            const cityForm = document.getElementById('cityForm');
+
+            document.getElementById('btn').addEventListener('click', (event) => {
+                event.preventDefault();
+                const city = cityForm.elements.city.value;
+                fetch(`${WEATHER_API_URL}?city=${city}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        weatherForecast = "";
+                        if (data.rain != null) {
+                            weatherForecast = `
+                        <h1>Current weather for ${city}</h1>
+                        <dl>
+                            <dt>Description:</dt>
+                            <dd>${data.weather[0].description}</dd>
+                            <dt>Temperature:</dt>
+                            <dd>${data.main.temp}°C</dd>
+                            <dt>Pressure:</dt>
+                            <dd>${data.main.pressure}hPa</dd>
+                            <dt>Precipitation:</dt>
+                            <dd>Rain: ${data.rain["1h"]}mm/h</dd>
+                        </dl>
+                        `;
+                        } else if (data.snow != null) {
+                            weatherForecast = `
+                        <h1>Current weather for ${city}</h1>
+                        <dl>
+                            <dt>Description:</dt>
+                            <dd>${data.weather[0].description}</dd>
+                            <dt>Temperature:</dt>
+                            <dd>${data.main.temp}°C</dd>
+                            <dt>Pressure:</dt>
+                            <dd>${data.main.pressure}hPa</dd>
+                            <dt>Precipitation:</dt>
+                            <dd>Snow: ${data.snow["1h"]}mm/h</dd>
+                        </dl>
+                        `;
+                        } else {
+                            weatherForecast = `
+                        <h1>Current weather for ${city}</h1>
+                        <dl>
+                            <dt>Description:</dt>
+                            <dd>${data.weather[0].description}</dd>
+                            <dt>Temperature:</dt>
+                            <dd>${data.main.temp}°C</dd>
+                            <dt>Pressure:</dt>
+                            <dd>${data.main.pressure}hPa</dd>
+                            <dt>Precipitation:</dt>
+                            <dd>Not raining now!</dd>
+                        </dl>
+                        `;
+                        }
+                        document.getElementById('welcome').innerHTML = weatherForecast;
+                        document.getElementById('weatherIcon').innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="${data.weather[0].description}">`
+                        document.getElementById('weatherIcon').style.visibility = 'visible';
+                    });
+            });
+        }
+
+        function processOkResponse(response = {}) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error(`Status not 200 (${response.status})`);
+        }
+    })();
+</script>
+</body>
+</html>
