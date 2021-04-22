@@ -17,6 +17,10 @@ public class WeatherForecast {
         return weather;
     }
 
+    public Weather getFirstFromArrayWeather() {
+        return weather[0];
+    }
+
     public void setWeather(final Weather[] weather) {
         this.weather = weather;
     }

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pl.rdzienio.weather.WeatherService;
 
+import java.util.Arrays;
+
 @Controller
 @RequestMapping("")
 public class ClothesController {
@@ -25,7 +27,9 @@ public class ClothesController {
     @GetMapping
     public String showHomePageWithWeather(Model model)
     {
-        model.addAttribute("weatherForWarsaw", weatherService.getWeatherForecast("Warszawa"));
+        var weatherForWarsaw= weatherService.getWeatherForecast("Warszawa");
+        model.addAttribute("weatherForWarsaw", weatherForWarsaw);
+        model.addAttribute("weatherIconForWarsaw", weatherService.getWeatherIconForCity("Warszawa"));
         return "index";
     }
 

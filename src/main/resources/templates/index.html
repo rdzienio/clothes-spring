@@ -32,11 +32,13 @@
             <dd th:text="${weatherForWarsaw.main.pressure}+'hPa'">${data.main.pressure}hPa</dd>
             
             <dt>Precipitation:</dt>
-            <dd>Rain: ${data.rain["1h"]}mm/h</dd>
+            <dd th:if="${weatherForWarsaw.rain != null}" th:text='${weatherForWarsaw.rain["1h"]}mm/h"}'></dd>
+            <dd th:if="${weatherForWarsaw.snow != null}" th:text='${weatherForWarsaw.snow["1h"]}mm/h"}'></dd>
+            <dd th:if="${weatherForWarsaw.rain == null && weatherForWarsaw.snow == null}">Not raining now!</dd>
         </dl>
     </div>
-    <div class="pure-u-1-2" id="weatherIcon" style="visibility: hidden; text-align: center; margin: auto">
-        <img src="http://openweathermap.org/img/wn/10d@2x.png" alt="Weather icon">
+    <div class="pure-u-1-2" id="weatherIcon" style="visibility: visible; text-align: center; margin: auto">
+        <img th:src="${weatherIconForWarsaw}">
     </div>
     </div>
     <form id="cityForm" class="pure-form pure-g pure-form-aligned">

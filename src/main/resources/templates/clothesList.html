@@ -20,6 +20,34 @@
         </li>
     </ul>
 </div>
+    <form id="clothesForm" class="pure-form pure-form-aligned">
+        <fieldset>
+            <legend>Add new clothes</legend>
+            <div class="pure-control-group">
+                <label for="clothName">Name</label>
+                <input id="clothName" placeholder="name">
+            </div>
+            <div class="pure-control-group">
+                <label for="clothCategory">Category</label>
+                <input id="clothCategory" placeholder="category">
+            </div>
+            <div class="pure-control-group">
+                <label for="clothWaterproof">Waterproof</label>
+                <input id="clothWaterproof" placeholder="waterproof">
+            </div>
+            <div class="pure-control-group">
+                <label for="clothTemperature">Temperature</label>
+                <input id="clothTemperature" placeholder="temperature">
+            </div>
+            <div class="pure-control-group">
+                <label for="clothWind">Windproof</label>
+                <input id="clothWind" placeholder="windproof">
+            </div>
+            <div class="pure-controls">
+                <button id="addCloth" class="pure-button pure-button-primary">Save</button>
+            </div>
+        </fieldset>
+    </form>
 <!-- list of clothes-->
     <dl id="allClothes"></dl>
 </main>
@@ -27,6 +55,48 @@
     (function () {
         const API_URL = 'http://localhost:8080/api';
         const CLOTHES_API_URL = `${API_URL}/clothes`;
+
+        const SAVE_CLOTHES_URL = `${CLOTHES_API_URL}/save`;
+
+        const clothName = document.getElementById('clothName');
+        const clothCategory = document.getElementById('clothCategory');
+        const clothWaterproof = document.getElementById('clothWaterproof');
+        const clothTemperature = document.getElementById('clothTemperature');
+        const clothWind = document.getElementById('clothWind');
+
+        document.getElementById('addCloth').addEventListener('click', (event)=>{
+            event.preventDefault();
+            fetch(SAVE_CLOTHES_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: clothName.value,
+                    category: clothCategory.value,
+                    waterproof: clothWaterproof.value,
+                    temperature: clothTemperature.value,
+                    wind: clothWind.value})
+            })
+                .then(processOkResponse)
+                .then(showClothes)
+                .then(()=> {
+                    clothName.value = "";
+                    clothCategory.value = "";
+                    clothWaterproof.value = "";
+                    clothTemperature.value = "";
+                    clothWind.value = "";
+                })
+                .catch(console.warn)
+                .then(()=> {
+                    clothName.value = "";
+                    clothCategory.value = "";
+                    clothWaterproof.value = "";
+                    clothTemperature.value = "";
+                    clothWind.value = "";
+                });
+        })
 
         showClothes();
 
@@ -44,6 +114,13 @@
                 `).join('\n');
                     document.getElementById('allClothes').innerHTML = clothesList;
                 });
+        }
+
+        function processOkResponse(response = {}) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error(`Status not 200 (${response.status})`);
         }
     })();
 
