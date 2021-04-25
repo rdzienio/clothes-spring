@@ -9,7 +9,9 @@
 </head>
 <body>
 <main style="width: 50%; margin: 0 auto">
-    <div class="pure-menu pure-menu-horizontal">
+    <div class="pure-g">
+    <div id="logo" class="pure-u-2-5"><img class="pure-img" th:src="@{img/logo-cw.jpg}" alt="Clothing for every weather"></div>
+    <div class="pure-menu pure-menu-horizontal pure-u-3-5">
         <a href="/" class="pure-menu-heading pure-menu-link">HOMEPAGE</a>
         <ul class="pure-menu-list">
             <li class="pure-menu-item">
@@ -20,8 +22,9 @@
             </li>
         </ul>
     </div>
+    </div>
     <div id="header" class="pure-g">
-    <div class="pure-u-1-2" id="welcome" style="text-align: center">
+        <div class="pure-u-1-2" id="welcome" style="text-align: center">
         <h1>Current weather for Warszawa</h1>
         <dl>
             <dt>Description:</dt>
