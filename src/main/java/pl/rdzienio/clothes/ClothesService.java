@@ -43,4 +43,8 @@ public class ClothesService {
             logger.warn("Cloth with id [{}] not found!", idToRemove);
     }
 
+    public List<Clothes> getClothesForRainingWeather(){
+        return repository.findClothesByWaterproofGreaterThanEqual(2);
+    }
+
 }
